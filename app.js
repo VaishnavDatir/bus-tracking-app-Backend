@@ -54,8 +54,10 @@ const MONGODB_URI = process.env.DB_CONNECTION_STRING;
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log(`🌍 is listening at http://localhost:${process.env.PORT}`);
+    app.listen(process.env.PORT || 8080, () => {
+      console.log(
+        `🌍 is listening at http://localhost:${process.env.PORT || 8080}`
+      );
     });
   })
   .catch((err) => {
