@@ -39,4 +39,6 @@ router.post(
 
 router.post("/signin", authController.signin);
 
+router.get("/getUserData", isAuth, authController.getUserData);
+
 module.exports = router;

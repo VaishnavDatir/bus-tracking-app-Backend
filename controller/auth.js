@@ -13,7 +13,7 @@ exports.signup = async (req, res, next) => {
     if (!errors.isEmpty()) {
       const error = new Error("Cannot Sign up");
       error.statusCode = 422;
-      error.data = errors.array()[0];
+      error.data = errors.array()[0]["msg"];
       throw error;
     }
 
@@ -85,7 +85,7 @@ exports.signin = async (req, res, next) => {
     );
 
     res.status(200).json({
-      status: true,
+      success: true,
       token: token,
       type: loadedUser.type,
       userId: loadedUser._id.toString(),
@@ -96,5 +96,27 @@ exports.signin = async (req, res, next) => {
       err.statusCode = 500;
     }
     next(err);
+  }
+};
+
+exports.getUserData = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Got user data",
+      data: user,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
