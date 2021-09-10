@@ -13,6 +13,18 @@ exports.createStop = async (req, res, next) => {
       throw error;
     }
 
+    const stopDoc = await Stop.findOne({
+      stopName: new RegExp("^" + req.body.stopName + "$", "i"),
+      stopCity: new RegExp("^" + req.body.stopCity + "$", "i"),
+    });
+
+    if (stopDoc) {
+      const error = new Error("Cannot create new stop");
+      error.statusCode = 422;
+      error.data = "Stop with same name and same city already exists";
+      throw error;
+    }
+
     const stopName = req.body.stopName;
     const stopCity = req.body.stopCity;
     const stopLocationLat = req.body.stopLocationLat;
@@ -45,7 +57,7 @@ exports.getAllStops = async (req, res, next) => {
     const search = req.query.search;
     let stops;
     if (search == null || search == "") {
-      stops = await Stop.find();
+      stops = await Stop.find().sort({ stopCity: 1, stopName: 1 });
     } else {
       stops = await Stop.find({
         $or: [
@@ -53,7 +65,7 @@ exports.getAllStops = async (req, res, next) => {
           { stopName: new RegExp(search, "i") },
           { stopCity: new RegExp(search, "i") },
         ],
-      });
+      }).sort({ stopCity: 1, stopName: 1 });
     }
 
     res.status(200).json({
@@ -124,6 +136,41 @@ exports.getAllBuses = async (req, res, next) => {
       success: true,
       totalBus: buses.length,
       data: buses,
+      code: 1,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+exports.searchBusFromSourceToDestination = async (req, res, next) => {
+  try {
+    const sourceID = req.body.sourceID;
+    const destinationID = req.body.destinationID;
+
+    if (
+      sourceID == "" ||
+      sourceID.isEmpty ||
+      destinationID == "" ||
+      destinationID.isEmpty
+    ) {
+      const error = new Error("Cannot find bus");
+      error.statusCode = 422;
+      error.data = "Please specify source and destination stop";
+      throw error;
+    }
+
+    const busDoc = await Bus.find({
+      busStops: { $all: [sourceID, destinationID] },
+    });
+
+    res.json({
+      success: true,
+      busCount: busDoc.length,
+      data: busDoc,
       code: 1,
     });
   } catch (error) {

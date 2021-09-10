@@ -17,23 +17,27 @@ router.post(
       .trim()
       .not()
       .isEmpty()
-      .withMessage("Please enter a valid stop name")
-      .custom(async (value, { req }) => {
+      .withMessage("Please enter a valid stop name"),
+    /* .custom(async (value, { req }) => {
         const stopDoc = await Stop.findOne({
           stopName: new RegExp("^" + value + "$", "i"),
         });
         if (stopDoc) {
           return Promise.reject("Stop already exists!");
         }
-      }),
+      }), */
   ],
   busController.createStop
 );
 
-router.get("/allstops", isAuth, busController.getAllStops);
+router.get("/allstops", busController.getAllStops);
 
 // <---- BUS ---->
 router.post("/createbusroute", isAuth, busController.createBusRoute);
 router.get("/allbuses", isAuth, busController.getAllBuses);
+router.post(
+  "/searchBusFromSourceToDestination",
+  busController.searchBusFromSourceToDestination
+);
 
 module.exports = router;
