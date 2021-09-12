@@ -101,7 +101,7 @@ exports.signin = async (req, res, next) => {
 
 exports.getUserData = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).lean();
     if (!user) {
       const error = new Error("User not found");
       error.statusCode = 404;

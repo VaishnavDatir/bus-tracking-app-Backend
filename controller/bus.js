@@ -120,7 +120,7 @@ exports.getAllBuses = async (req, res, next) => {
     let buses;
 
     if (search == null || search == "") {
-      buses = await Bus.find().populate("busStops");
+      buses = await Bus.find().lean();
     } else {
       buses = await Bus.find({
         $or: [
@@ -129,7 +129,7 @@ exports.getAllBuses = async (req, res, next) => {
           { busProvider: new RegExp(search, "i") },
           { busType: new RegExp(search, "i") },
         ],
-      }).populate("busStops");
+      }).lean();
     }
 
     res.status(200).json({
@@ -165,13 +165,31 @@ exports.searchBusFromSourceToDestination = async (req, res, next) => {
 
     const busDoc = await Bus.find({
       busStops: { $all: [sourceID, destinationID] },
-    });
+    }); /* .populate("busStops") */
 
     res.json({
       success: true,
-      busCount: busDoc.length,
+      totalBus: busDoc.length,
       data: busDoc,
       code: 1,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+exports.getBusDetail = async (req, res, next) => {
+  try {
+    const busId = req.params.busId;
+
+    const selectedBus = await Bus.findById(busId).populate("busStops").lean();
+
+    res.json({
+      success: true,
+      busDetailData: selectedBus,
     });
   } catch (error) {
     if (!error.statusCode) {
