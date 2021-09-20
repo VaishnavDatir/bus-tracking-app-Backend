@@ -18,6 +18,12 @@ router.post(
       .not()
       .isEmpty()
       .withMessage("Please enter a valid stop name"),
+
+    body("stopCity")
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage("Please enter a valid stop city"),
   ],
   busController.createStop
 );

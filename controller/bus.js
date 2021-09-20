@@ -25,14 +25,14 @@ exports.createStop = async (req, res, next) => {
       throw error;
     }
 
-    const stopName = req.body.stopName;
-    const stopCity = req.body.stopCity;
+    const stopName = req.body.stopName.trim();
+    const stopCity = req.body.stopCity.trim();
     const stopLocationLat = req.body.stopLocationLat;
     const stopLocationLong = req.body.stopLocationLong;
 
     const stop = new Stop({
-      stopName: stopName,
-      stopCity: stopCity,
+      stopName: stopName.charAt(0).toUpperCase() + stopName.slice(1),
+      stopCity: stopCity.charAt(0).toUpperCase() + stopCity.slice(1),
     });
 
     const result = await stop.save();
