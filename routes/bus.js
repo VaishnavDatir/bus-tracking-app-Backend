@@ -38,5 +38,6 @@ router.post(
   busController.searchBusFromSourceToDestination
 );
 router.get("/busDetail/:busId", isAuth, busController.getBusDetail);
+router.post("/updateBus/:busId", isAuth, busController.updateBusDetails);
 
 module.exports = router;
