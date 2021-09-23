@@ -120,7 +120,9 @@ exports.getAllBuses = async (req, res, next) => {
     let buses;
 
     if (search == null || search == "") {
-      buses = await Bus.find().lean();
+      buses = await Bus.find()
+        .sort({ busProvider: 1, busType: 1, busNumber: 1 })
+        .lean();
     } else {
       buses = await Bus.find({
         $or: [
@@ -190,6 +192,46 @@ exports.getBusDetail = async (req, res, next) => {
     res.json({
       success: true,
       busDetailData: selectedBus,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+exports.updateBusDetails = async (req, res, next) => {
+  try {
+    const busId = req.params.busId;
+
+    const busDoc = await Bus.findById(busId);
+
+    if (!busDoc) {
+      const error = new Error("Could not find this bus.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const busNumber = req.body.busNumber;
+    const busType = req.body.busType;
+    const busProvider = req.body.busProvider;
+    const busTimings = req.body.busTimings;
+    const busStops = req.body.busStops;
+
+    busDoc.busNumber = busNumber;
+    busDoc.busType = busType;
+    busDoc.busProvider = busProvider;
+    busDoc.busTimings = busTimings;
+    busDoc.busStops = busStops;
+    busDoc.isActive = false;
+
+    const updateBus = await busDoc.save();
+
+    res.json({
+      success: true,
+      message: "Bus Data updated!",
+      data: updateBus,
     });
   } catch (error) {
     if (!error.statusCode) {
