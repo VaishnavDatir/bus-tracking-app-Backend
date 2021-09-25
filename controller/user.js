@@ -111,8 +111,12 @@ exports.updateUserLocation = async (req, res, next) => {
 exports.setDriverOnBus = async (req, res, next) => {
   try {
     const driver = await User.findById(req.userId);
+
     const busId = req.body.busId;
     const bus = await Bus.findById(busId);
+
+    await bus.activeDrivers.push(driver);
+    await bus.save();
 
     driver.isActive = true;
     driver.onBus = bus;
@@ -134,6 +138,11 @@ exports.setDriverOnBus = async (req, res, next) => {
 exports.removeDriverOnBus = async (req, res, next) => {
   try {
     const driver = await User.findById(req.userId);
+
+    const busId = driver.onBus;
+    const bus = await Bus.findById(busId);
+    await bus.activeDrivers.push(driver);
+    await bus.save();
 
     driver.isActive = false;
     driver.onBus = null;

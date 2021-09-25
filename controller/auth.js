@@ -80,8 +80,8 @@ exports.signin = async (req, res, next) => {
         email: loadedUser.email,
         userId: loadedUser._id.toString(),
       },
-      process.env.JWT_SECRET_KEY
-      // { expiresIn: "1h" }
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "28d" }
     );
 
     res.status(200).json({

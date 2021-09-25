@@ -26,6 +26,12 @@ const busSchema = new Schema({
     type: String,
     required: true,
   },
+  activeDrivers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Bus", busSchema);
