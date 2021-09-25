@@ -120,8 +120,7 @@ exports.setDriverOnBus = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: "driver set on bus",
-      data: driver,
+      message: "Driver set on bus",
       code: 1,
     });
   } catch (error) {
@@ -142,8 +141,7 @@ exports.removeDriverOnBus = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: "driver removed from bus",
-      data: driver,
+      message: "You are now on off-duty",
       code: 1,
     });
   } catch (error) {

@@ -41,7 +41,7 @@ exports.createStop = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: "New Stop Created",
+      message: stopName + " has been successfully added to list",
       code: 1,
     });
   } catch (error) {
