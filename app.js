@@ -41,11 +41,13 @@ app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;
   const data = error.data;
+  const code = error.code || -4;
+
   res.status(status).json({
     success: false,
     message: message,
     data: data,
-    code: -1,
+    code: code,
   });
 });
 

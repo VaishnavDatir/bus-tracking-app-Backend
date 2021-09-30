@@ -39,5 +39,6 @@ router.post(
 );
 router.get("/busDetail/:busId", isAuth, busController.getBusDetail);
 router.post("/updateBus/:busId", isAuth, busController.updateBusDetails);
+router.get("/deleteBus/:busId", isAuth, busController.deleteBus);
 
 module.exports = router;

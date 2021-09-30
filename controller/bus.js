@@ -189,6 +189,13 @@ exports.getBusDetail = async (req, res, next) => {
 
     const selectedBus = await Bus.findById(busId).populate("busStops").lean();
 
+    if (!selectedBus) {
+      const error = new Error("Could not find this bus.");
+      error.statusCode = 404;
+      error.code = -2;
+      throw error;
+    }
+
     res.json({
       success: true,
       busDetailData: selectedBus,
@@ -232,6 +239,25 @@ exports.updateBusDetails = async (req, res, next) => {
       success: true,
       message: "Bus Data updated!",
       data: updateBus,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+exports.deleteBus = async (req, res, next) => {
+  try {
+    const busId = req.params.busId;
+
+    await Bus.findByIdAndRemove(busId);
+
+    res.json({
+      success: true,
+      message: "Bus deleted",
+      code: 0,
     });
   } catch (error) {
     if (!error.statusCode) {
