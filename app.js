@@ -53,13 +53,54 @@ app.use((error, req, res, next) => {
 
 const MONGODB_URI = process.env.DB_CONNECTION_STRING;
 
+const activeUsers = [];
+
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    app.listen(process.env.PORT || 8080, () => {
+    const server = app.listen(process.env.PORT || 8080, () => {
       console.log(
         `🌍 is listening at http://localhost:${process.env.PORT || 8080}`
       );
+    });
+
+    const io = require("./socket").init(server);
+
+    io.on("connection", (socket) => {
+      console.log("client connected...", socket.id);
+
+      socket.on("disconnect", function () {
+        console.log("client disconnect...", socket.id);
+        console.log(activeUsers);
+
+        const index = activeUsers.findIndex(
+          (_item) => _item.client_id === "30abNEN9TcuLE82XAAAD"
+        );
+        console.log(index);
+
+        activeUsers.splice(index, 1);
+        console.log(activeUsers);
+
+        io.emit("message", [...activeUsers]);
+      });
+
+      socket.on("message", function (data) {
+        var gotD = JSON.parse(data);
+
+        const index = activeUsers.findIndex(
+          (_item) => _item.client_id === socket.id
+        );
+
+        if (index < 0) {
+          activeUsers.push({
+            client_id: socket.id,
+            data: gotD,
+          });
+        } else {
+          activeUsers[index].data = gotD;
+        }
+        io.emit("message", [...activeUsers]);
+      });
     });
   })
   .catch((err) => {
