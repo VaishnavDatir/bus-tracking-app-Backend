@@ -58,11 +58,14 @@ const activeUsers = [];
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    const server = app.listen(process.env.PORT || 8080, () => {
-      console.log(
-        `🌍 is listening at http://localhost:${process.env.PORT || 8080}`
-      );
-    });
+    const server = app.listen(
+      process.env.PORT || 8080,
+      /* "0.0.0.0", */ () => {
+        console.log(
+          `🌍 is listening at http://localhost:${process.env.PORT || 8080}`
+        );
+      }
+    );
 
     const io = require("./socket").init(server);
 
@@ -71,20 +74,17 @@ mongoose
 
       socket.on("disconnect", function () {
         console.log("client disconnect...", socket.id);
-        console.log(activeUsers);
 
         const index = activeUsers.findIndex(
-          (_item) => _item.client_id === "30abNEN9TcuLE82XAAAD"
+          (_item) => _item.client_id === socket.id
         );
-        console.log(index);
 
         activeUsers.splice(index, 1);
-        console.log(activeUsers);
 
-        io.emit("message", [...activeUsers]);
+        io.emit("location", [...activeUsers]);
       });
 
-      socket.on("message", function (data) {
+      socket.on("location", function (data) {
         var gotD = JSON.parse(data);
 
         const index = activeUsers.findIndex(
@@ -99,7 +99,7 @@ mongoose
         } else {
           activeUsers[index].data = gotD;
         }
-        io.emit("message", [...activeUsers]);
+        io.emit("location", [...activeUsers]);
       });
     });
   })

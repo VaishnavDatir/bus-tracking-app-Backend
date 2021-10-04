@@ -115,7 +115,7 @@ exports.setDriverOnBus = async (req, res, next) => {
     const busId = req.body.busId;
     const bus = await Bus.findById(busId);
 
-    await bus.activeDrivers.push(driver);
+    await bus.activeDrivers.push(driver.id);
     await bus.save();
 
     driver.isActive = true;
@@ -125,6 +125,7 @@ exports.setDriverOnBus = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Driver set on bus",
+      data: bus,
       code: 1,
     });
   } catch (error) {
@@ -141,7 +142,7 @@ exports.removeDriverOnBus = async (req, res, next) => {
 
     const busId = driver.onBus;
     const bus = await Bus.findById(busId);
-    await bus.activeDrivers.push(driver);
+    await bus.activeDrivers.pop(driver);
     await bus.save();
 
     driver.isActive = false;
