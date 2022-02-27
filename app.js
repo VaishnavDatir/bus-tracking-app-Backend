@@ -158,6 +158,8 @@ mongoose
       socket.on("location", function (data) {
         var gotD = JSON.parse(data);
 
+        console.log("got: ", gotD);
+
         const index = activeUsers.findIndex(
           (_item) => _item.client_id === socket.id
         );
@@ -174,7 +176,7 @@ mongoose
       });
 
       socket.on("userOfDuty", function () {
-        console.log("client disconnect...", socket.id);
+        console.log("client off duty...", socket.id);
 
         const index = activeUsers.findIndex(
           (_item) => _item.client_id === socket.id
