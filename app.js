@@ -158,7 +158,7 @@ mongoose
       socket.on("location", function (data) {
         var gotD = JSON.parse(data);
 
-        console.log("got: ", gotD);
+        // console.log("got: ", gotD);
 
         const index = activeUsers.findIndex(
           (_item) => _item.client_id === socket.id
