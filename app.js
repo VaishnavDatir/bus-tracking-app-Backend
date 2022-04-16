@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
+const cors = require("cors");
 
 const mongoose = require("mongoose");
 const multer = require("multer");
@@ -16,12 +17,21 @@ const app = express();
 
 require("dotenv").config();
 
+app.use(
+  cors({
+    origin: "*",
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+    exposedHeaders: ["x-auth-token"],
+  })
+);
 app.use(helmet());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -30,7 +40,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Header", "Content-Type,Authorization");
   res.setHeader("Content-Type", "application/json; charset=UTF-8");
   next();
-});
+}); */
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
@@ -59,36 +69,34 @@ const activeUsers = [];
   {
     client_id: "MY4iB0fwRQW8WKLxhFAAAE",
     data: {
-      bus: {
-        _id: "617068716812c68a81a5ccfd",
-        busType: "Non-AC",
-        busStops: [
-          "6170660d6812c68a81a5cce7",
-          "617066926812c68a81a5ccec",
-          "617067bc199bd7817bd8f693",
-          "617066b76812c68a81a5ccf6",
-          "61706733199bd7817bd8f68b",
-          "61706751199bd7817bd8f68c",
-          "6170675d199bd7817bd8f68d",
-        ],
-        busTimings: [
-          "00:00",
-          "00:10",
-          "12:05",
-          "12:15",
-          "12:30",
-          "12:45",
-          "13:00",
-          "13:15",
-        ],
-        busProvider: "NMMT",
-        busNumber: "101",
-        activeDrivers: [],
-        __v: 1,
-      },
-      latitude: "19.105396",
-      longitude: "73.002903",
+      _id: "617068716812c68a81a5ccfd",
+      busType: "Non-AC",
+      busStops: [
+        "6170660d6812c68a81a5cce7",
+        "617066926812c68a81a5ccec",
+        "617067bc199bd7817bd8f693",
+        "617066b76812c68a81a5ccf6",
+        "61706733199bd7817bd8f68b",
+        "61706751199bd7817bd8f68c",
+        "6170675d199bd7817bd8f68d",
+      ],
+      busTimings: [
+        "00:00",
+        "00:10",
+        "12:05",
+        "12:15",
+        "12:30",
+        "12:45",
+        "13:00",
+        "13:15",
+      ],
+      busProvider: "NMMT",
+      busNumber: "101",
+      activeDrivers: ["617065970b84ed340fbd7297"],
+      __v: 124,
     },
+    latitude: "19.1050533",
+    longitude: "73.0017933",
   },
   {
     client_id: "MY4iB0fwRQW8WKLxhFAAmm",
