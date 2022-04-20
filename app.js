@@ -176,10 +176,13 @@ mongoose
           activeUsers.push({
             client_id: socket.id,
             data: gotD,
+            passengers: [],
           });
         } else {
           activeUsers[index].data = gotD;
         }
+        // console.log("202", activeUsers);
+
         io.emit("location", [...activeUsers]);
       });
 
@@ -193,6 +196,46 @@ mongoose
         activeUsers.splice(index, 1);
 
         io.emit("location", [...activeUsers]);
+      });
+
+      socket.on("addPassOnBus", function (data) {
+        const addPassOnBusData = JSON.parse(data);
+
+        // console.log("called addPassOnBus", socket.id);
+        // console.log("in addPassOnBus got: ", addPassOnBusData);
+
+        // console.log(addPassOnBusData["bus_client_id"]);
+        const bus_client_id = addPassOnBusData["bus_client_id"];
+
+        const index = activeUsers.findIndex(
+          (_item) => _item.client_id === bus_client_id
+        );
+
+        const passIndex = activeUsers[index].passengers.findIndex(
+          (_item) => _item === socket.id
+        );
+
+        if (passIndex === -1) {
+          activeUsers[index].passengers.push(socket.id);
+        }
+        // console.log("101", activeUsers);
+      });
+
+      socket.on("removePassFromBus", function (data) {
+        const removePassFromBusData = JSON.parse(data);
+        const bus_client_id = removePassFromBusData["bus_client_id"];
+
+        const index = activeUsers.findIndex(
+          (_item) => _item.client_id === bus_client_id
+        );
+
+        const passIndex = activeUsers[index].passengers.findIndex(
+          (_item) => _item === socket.id
+        );
+
+        if (passIndex != -1) {
+          activeUsers[index].passengers.splice(passIndex, 1);
+        }
       });
     });
   })

@@ -32,6 +32,10 @@ const busSchema = new Schema({
       ref: "User",
     },
   ],
+  sittingCap: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Bus", busSchema);

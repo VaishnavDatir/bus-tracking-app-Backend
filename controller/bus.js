@@ -89,6 +89,7 @@ exports.createBusRoute = async (req, res, next) => {
     const busProvider = req.body.busProvider;
     const busTimings = req.body.busTimings;
     const busStops = req.body.busStops;
+    const sittingCap = req.body.sittingCap;
 
     const newBus = new Bus({
       busNumber: busNumber,
@@ -96,6 +97,7 @@ exports.createBusRoute = async (req, res, next) => {
       busProvider: busProvider,
       busTimings: busTimings,
       busStops: busStops,
+      sittingCap: sittingCap,
       isActive: false,
     });
 
@@ -225,6 +227,7 @@ exports.updateBusDetails = async (req, res, next) => {
     const busProvider = req.body.busProvider;
     const busTimings = req.body.busTimings;
     const busStops = req.body.busStops;
+    const sittingCap = req.body.sittingCap;
 
     busDoc.busNumber = busNumber;
     busDoc.busType = busType;
@@ -232,6 +235,7 @@ exports.updateBusDetails = async (req, res, next) => {
     busDoc.busTimings = busTimings;
     busDoc.busStops = busStops;
     busDoc.isActive = false;
+    busDoc.sittingCap = sittingCap;
 
     const updateBus = await busDoc.save();
 
